@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173b32">
+<title>Meine Servicehilfe</title>
+<style>
+body{font:17px -apple-system,sans-serif;background:#f3f5f2;color:#19251f;margin:0}header{background:#173b32;color:white;padding:20px}main{padding:14px;max-width:650px;margin:auto}.panel{background:white;padding:16px;border-radius:16px;margin-bottom:14px}h2{font-size:20px}.tables,.drinks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}button,input,textarea{font:inherit;padding:12px;border-radius:10px;border:1px solid #cbd7cd}button{background:#eaf1eb;color:#173b32;font-weight:600}.chosen,.save{background:#173b32;color:white}.save{width:100%;margin-top:12px}input,textarea{width:100%;box-sizing:border-box;margin:5px 0 12px}.order{border:1px solid #ddd;padding:12px;border-radius:12px;margin:10px 0}.muted{color:#66736a;font-size:14px}
+</style>
+<header><h1>Meine Servicehilfe</h1>25 Tische · Meine Bestellungen</header>
+<main>
+<section class="panel"><h2>1. Tisch auswählen</h2><div class="tables" id="tables"></div><p id="selected">Ausgewählt: Tisch 1</p></section>
+<section class="panel"><h2>2. Bestellung</h2>
+<label>Menge</label><input id="qty" type="number" min="1" max="99" value="1">
+<h3>Getränk auswählen</h3><div class="drinks" id="drinks"></div>
+<h3>Eigenes Getränk hinzufügen</h3><input id="newDrink" placeholder="z. B. Apfelschorle"><button id="addDrink">Getränk hinzufügen</button>
+<h3>Essen / Sonderwünsche</h3><textarea id="note" rows="3" placeholder="z. B. nur Reis, ohne Soße"></textarea>
+<button class="save" id="save">Bestellung speichern</button></section>
+<section class="panel"><h2>Offene Bestellungen</h2><div id="orders"></div></section>
+<section class="panel"><h2>Erledigte Bestellungen</h2><div id="done"></div></section>
+<p class="muted">Die Daten werden in diesem Browser auf diesem Gerät gespeichert. Noch nicht mit anderen Kellnern synchronisiert.</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let table=1, drinks=JSON.parse(localStorage.getItem('sh_drinks')||'null')||['Stilles Wasser','Sprudelwasser','Fanta','Cola'];
+let orders=JSON.parse(localStorage.getItem('sh_orders')||'[]'), cart={};
+function persist(){localStorage.setItem('sh_drinks',JSON.stringify(drinks));localStorage.setItem('sh_orders',JSON.stringify(orders))}
+function drawTables(){$('tables').innerHTML='';for(let i=1;i<=25;i++){let b=document.createElement('button');b.textContent='Tisch '+i;b.className=i===table?'chosen':'';b.onclick=()=>{table=i;$('selected').textContent='Ausgewählt: Tisch '+i;drawTables()};$('tables').append(b)}}
+function drawDrinks(){$('drinks').innerHTML='';drinks.forEach(d=>{let b=document.createElement('button');b.textContent=d;b.onclick=()=>{let n=Math.max(1,parseInt($('qty').value)||1);cart[d]=(cart[d]||0)+n;b.textContent=d+' ✓';setTimeout(drawDrinks,500)};$('drinks').append(b)})}
+function drawOrders(){let a=orders.filter(o=>!o.done),d=orders.filter(o=>o.done);$('orders').innerHTML=a.length?'':'<p>Keine offenen Bestellungen.</p>';$('done').innerHTML=d.length?'':'<p>Noch nichts erledigt.</p>';a.concat(d).forEach(o=>{let div=document.createElement('div');div.className='order';let title=document.createElement('b');title.textContent='Tisch '+o.table+' · '+o.time;div.append(title);let p=document.createElement('p');p.textContent=o.items.join(', ')+(o.note?' | Wunsch: '+o.note:'');div.append(p);let b=document.createElement('button');b.textContent=o.done?'Wieder öffnen':'Als geliefert markieren';b.onclick=()=>{o.done=!o.done;persist();drawOrders()};div.append(b);let del=document.createElement('button');del.textContent='Löschen';del.style.marginLeft='8px';del.onclick=()=>{orders=orders.filter(x=>x.id!==o.id);persist();drawOrders()};div.append(del);(o.done?$('done'):$('orders')).append(div)})}
+$('addDrink').onclick=()=>{let v=$('newDrink').value.trim();if(v&&!drinks.some(d=>d.toLowerCase()===v.toLowerCase())){drinks.push(v);persist();drawDrinks();$('newDrink').value=''}};
+$('save').onclick=()=>{let items=Object.entries(cart).map(([k,v])=>v+' × '+k),note=$('note').value.trim();if(!items.length&&!note){alert('Bitte ein Getränk oder einen Wunsch eingeben.');return}orders.unshift({id:Date.now(),table,items,note,done:false,time:new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})});cart={};$('note').value='';persist();drawDrinks();drawOrders();alert('Bestellung für Tisch '+table+' gespeichert.')};
+drawTables();drawDrinks();drawOrders();
+</script>
+</html>
