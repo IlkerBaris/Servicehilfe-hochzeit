@@ -1,35 +1,717 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#173b32">
-<title>Meine Servicehilfe</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicehilfe Hochzeit</title>
 <style>
-body{font:17px -apple-system,sans-serif;background:#f3f5f2;color:#19251f;margin:0}header{background:#173b32;color:white;padding:20px}main{padding:14px;max-width:650px;margin:auto}.panel{background:white;padding:16px;border-radius:16px;margin-bottom:14px}h2{font-size:20px}.tables,.drinks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}button,input,textarea{font:inherit;padding:12px;border-radius:10px;border:1px solid #cbd7cd}button{background:#eaf1eb;color:#173b32;font-weight:600}.chosen,.save{background:#173b32;color:white}.save{width:100%;margin-top:12px}input,textarea{width:100%;box-sizing:border-box;margin:5px 0 12px}.order{border:1px solid #ddd;padding:12px;border-radius:12px;margin:10px 0}.muted{color:#66736a;font-size:14px}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f4f4f4;
+  color: #222;
+}
+
+header {
+  background: #173b32;
+  color: white;
+  padding: 18px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+main {
+  max-width: 700px;
+  margin: auto;
+  padding: 15px;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.tables {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.table {
+  padding: 15px 5px;
+  border-radius: 12px;
+  border: 1px solid #ccd8d0;
+  background: #edf2ee;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.table.active {
+  background: #173b32;
+  color: white;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 15px 0;
+}
+
+.quantity button {
+  width: 55px;
+  height: 50px;
+  font-size: 28px;
+  border: none;
+  border-radius: 12px;
+  background: #173b32;
+  color: white;
+}
+
+.quantity span {
+  font-size: 24px;
+  min-width: 35px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.drinks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.drink {
+  padding: 14px 8px;
+  border: none;
+  border-radius: 12px;
+  background: #e6efe9;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.drink:active {
+  transform: scale(.97);
+}
+
+.current-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  margin-top: 7px;
+  background: #f0f3f0;
+  border-radius: 10px;
+}
+
+.delete {
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+input, textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #ccd4ce;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-top: 7px;
+}
+
+.add-drink {
+  display: flex;
+  gap: 8px;
+}
+
+.add-drink input {
+  flex: 1;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.primary {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  background: #173b32;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.secondary {
+  padding: 10px;
+  background: #e6ebe7;
+  border: none;
+  border-radius: 10px;
+}
+
+.order {
+  border: 1px solid #d8ded9;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.order-title {
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+}
+
+.order-items {
+  white-space: pre-line;
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.order-actions button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 9px;
+}
+
+.done {
+  background: #dff0df;
+}
+
+.empty {
+  color: #68756c;
+}
+
+.small {
+  font-size: 12px;
+  color: #68756c;
+}
+
+@media (min-width: 600px) {
+  .tables {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .drinks {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
 </style>
-<header><h1>Meine Servicehilfe</h1>25 Tische · Meine Bestellungen</header>
+</head>
+
+<body>
+
+<header>
+  <h1>🍽️ Servicehilfe</h1>
+  <div>25 Tische</div>
+</header>
+
 <main>
-<section class="panel"><h2>1. Tisch auswählen</h2><div class="tables" id="tables"></div><p id="selected">Ausgewählt: Tisch 1</p></section>
-<section class="panel"><h2>2. Bestellung</h2>
-<label>Menge</label><input id="qty" type="number" min="1" max="99" value="1">
-<h3>Getränk auswählen</h3><div class="drinks" id="drinks"></div>
-<h3>Eigenes Getränk hinzufügen</h3><input id="newDrink" placeholder="z. B. Apfelschorle"><button id="addDrink">Getränk hinzufügen</button>
-<h3>Essen / Sonderwünsche</h3><textarea id="note" rows="3" placeholder="z. B. nur Reis, ohne Soße"></textarea>
-<button class="save" id="save">Bestellung speichern</button></section>
-<section class="panel"><h2>Offene Bestellungen</h2><div id="orders"></div></section>
-<section class="panel"><h2>Erledigte Bestellungen</h2><div id="done"></div></section>
-<p class="muted">Die Daten werden in diesem Browser auf diesem Gerät gespeichert. Noch nicht mit anderen Kellnern synchronisiert.</p>
+
+<div class="card">
+<h2>1. Tisch auswählen</h2>
+<div class="tables" id="tables"></div>
+</div>
+
+<div class="card">
+<h2>2. Bestellung aufnehmen</h2>
+
+<div>
+<strong>Ausgewählter Tisch:</strong>
+<span id="selectedTable">Tisch 1</span>
+</div>
+
+<h3>Menge</h3>
+
+<div class="quantity">
+<button onclick="changeQuantity(-1)">−</button>
+<span id="quantity">1</span>
+<button onclick="changeQuantity(1)">+</button>
+</div>
+
+<h3>Getränke</h3>
+
+<div class="drinks" id="drinkButtons"></div>
+
+<h3>Aktuelle Bestellung</h3>
+
+<div id="cart">
+<p class="empty">Noch nichts ausgewählt.</p>
+</div>
+
+<h3>Eigenes Getränk hinzufügen</h3>
+
+<div class="add-drink">
+<input id="newDrink" placeholder="z. B. Apfelschorle">
+<button class="secondary" onclick="addDrink()">Hinzufügen</button>
+</div>
+
+<h3>Essen / Sonderwunsch</h3>
+
+<textarea id="food" rows="3"
+placeholder="z. B. nur Reis, ohne Soße"></textarea>
+
+<button class="primary" onclick="saveOrder()">
+Bestellung speichern
+</button>
+
+</div>
+
+<div class="card">
+<h2>3. Offene Bestellungen</h2>
+<div id="orders"></div>
+</div>
+
+<div class="card">
+<h2>4. Erledigte Bestellungen</h2>
+<div id="doneOrders"></div>
+</div>
+
 </main>
+
 <script>
-const $=id=>document.getElementById(id);
-let table=1, drinks=JSON.parse(localStorage.getItem('sh_drinks')||'null')||['Stilles Wasser','Sprudelwasser','Fanta','Cola'];
-let orders=JSON.parse(localStorage.getItem('sh_orders')||'[]'), cart={};
-function persist(){localStorage.setItem('sh_drinks',JSON.stringify(drinks));localStorage.setItem('sh_orders',JSON.stringify(orders))}
-function drawTables(){$('tables').innerHTML='';for(let i=1;i<=25;i++){let b=document.createElement('button');b.textContent='Tisch '+i;b.className=i===table?'chosen':'';b.onclick=()=>{table=i;$('selected').textContent='Ausgewählt: Tisch '+i;drawTables()};$('tables').append(b)}}
-function drawDrinks(){$('drinks').innerHTML='';drinks.forEach(d=>{let b=document.createElement('button');b.textContent=d;b.onclick=()=>{let n=Math.max(1,parseInt($('qty').value)||1);cart[d]=(cart[d]||0)+n;b.textContent=d+' ✓';setTimeout(drawDrinks,500)};$('drinks').append(b)})}
-function drawOrders(){let a=orders.filter(o=>!o.done),d=orders.filter(o=>o.done);$('orders').innerHTML=a.length?'':'<p>Keine offenen Bestellungen.</p>';$('done').innerHTML=d.length?'':'<p>Noch nichts erledigt.</p>';a.concat(d).forEach(o=>{let div=document.createElement('div');div.className='order';let title=document.createElement('b');title.textContent='Tisch '+o.table+' · '+o.time;div.append(title);let p=document.createElement('p');p.textContent=o.items.join(', ')+(o.note?' | Wunsch: '+o.note:'');div.append(p);let b=document.createElement('button');b.textContent=o.done?'Wieder öffnen':'Als geliefert markieren';b.onclick=()=>{o.done=!o.done;persist();drawOrders()};div.append(b);let del=document.createElement('button');del.textContent='Löschen';del.style.marginLeft='8px';del.onclick=()=>{orders=orders.filter(x=>x.id!==o.id);persist();drawOrders()};div.append(del);(o.done?$('done'):$('orders')).append(div)})}
-$('addDrink').onclick=()=>{let v=$('newDrink').value.trim();if(v&&!drinks.some(d=>d.toLowerCase()===v.toLowerCase())){drinks.push(v);persist();drawDrinks();$('newDrink').value=''}};
-$('save').onclick=()=>{let items=Object.entries(cart).map(([k,v])=>v+' × '+k),note=$('note').value.trim();if(!items.length&&!note){alert('Bitte ein Getränk oder einen Wunsch eingeben.');return}orders.unshift({id:Date.now(),table,items,note,done:false,time:new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})});cart={};$('note').value='';persist();drawDrinks();drawOrders();alert('Bestellung für Tisch '+table+' gespeichert.')};
-drawTables();drawDrinks();drawOrders();
+
+let selectedTable = 1;
+let quantity = 1;
+
+let drinks = JSON.parse(
+  localStorage.getItem("myDrinks") ||
+  '["Stilles Wasser","Sprudelwasser","Fanta","Cola"]'
+);
+
+let cart = {};
+
+let orders = JSON.parse(
+  localStorage.getItem("myOrders") || "[]"
+);
+
+function saveData() {
+  localStorage.setItem("myDrinks", JSON.stringify(drinks));
+  localStorage.setItem("myOrders", JSON.stringify(orders));
+}
+
+function renderTables() {
+
+  const container = document.getElementById("tables");
+  container.innerHTML = "";
+
+  for (let i = 1; i <= 25; i++) {
+
+    const button = document.createElement("button");
+
+    button.className =
+      "table" + (i === selectedTable ? " active" : "");
+
+    button.textContent = "Tisch " + i;
+
+    button.onclick = function() {
+      selectTable(i);
+    };
+
+    container.appendChild(button);
+  }
+}
+
+function selectTable(table) {
+
+  selectedTable = table;
+
+  document.getElementById("selectedTable").textContent =
+    "Tisch " + table;
+
+  renderTables();
+}
+
+function changeQuantity(value) {
+
+  quantity += value;
+
+  if (quantity < 1) {
+    quantity = 1;
+  }
+
+  document.getElementById("quantity").textContent =
+    quantity;
+}
+
+function renderDrinks() {
+
+  const container =
+    document.getElementById("drinkButtons");
+
+  container.innerHTML = "";
+
+  drinks.forEach(function(drink) {
+
+    const button = document.createElement("button");
+
+    button.className = "drink";
+
+    button.textContent = drink;
+
+    button.onclick = function() {
+      addToCart(drink);
+    };
+
+    container.appendChild(button);
+
+  });
+}
+
+function addToCart(drink) {
+
+  if (!cart[drink]) {
+    cart[drink] = 0;
+  }
+
+  cart[drink] += quantity;
+
+  quantity = 1;
+
+  document.getElementById("quantity").textContent = 1;
+
+  renderCart();
+}
+
+function removeFromCart(drink) {
+
+  delete cart[drink];
+
+  renderCart();
+}
+
+function renderCart() {
+
+  const container =
+    document.getElementById("cart");
+
+  const items =
+    Object.keys(cart);
+
+  if (items.length === 0) {
+
+    container.innerHTML =
+      '<p class="empty">Noch nichts ausgewählt.</p>';
+
+    return;
+  }
+
+  container.innerHTML = "";
+
+  items.forEach(function(drink) {
+
+    const row =
+      document.createElement("div");
+
+    row.className = "current-item";
+
+    row.innerHTML =
+      "<span>" +
+      cart[drink] +
+      " × " +
+      drink +
+      "</span>";
+
+    const deleteButton =
+      document.createElement("button");
+
+    deleteButton.className = "delete";
+
+    deleteButton.textContent = "Löschen";
+
+    deleteButton.onclick = function() {
+      removeFromCart(drink);
+    };
+
+    row.appendChild(deleteButton);
+
+    container.appendChild(row);
+
+  });
+}
+
+function addDrink() {
+
+  const input =
+    document.getElementById("newDrink");
+
+  const name =
+    input.value.trim();
+
+  if (!name) {
+    return;
+  }
+
+  if (!drinks.includes(name)) {
+
+    drinks.push(name);
+
+    saveData();
+
+    renderDrinks();
+  }
+
+  input.value = "";
+}
+
+function saveOrder() {
+
+  const food =
+    document.getElementById("food").value.trim();
+
+  if (
+    Object.keys(cart).length === 0 &&
+    !food
+  ) {
+
+    alert("Bitte zuerst eine Bestellung eingeben.");
+
+    return;
+  }
+
+  const items = [];
+
+  Object.keys(cart).forEach(function(drink) {
+
+    items.push(
+      cart[drink] +
+      " × " +
+      drink
+    );
+
+  });
+
+  if (food) {
+
+    items.push(
+      "🍽️ " + food
+    );
+
+  }
+
+  orders.unshift({
+
+    id: Date.now(),
+
+    table: selectedTable,
+
+    items: items,
+
+    status: "open",
+
+    time: new Date().toLocaleTimeString(
+      "de-DE",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    )
+
+  });
+
+  cart = {};
+
+  document.getElementById("food").value = "";
+
+  saveData();
+
+  renderCart();
+
+  renderOrders();
+
+  alert(
+    "Bestellung für Tisch " +
+    selectedTable +
+    " gespeichert."
+  );
+}
+
+function renderOrders() {
+
+  const open =
+    document.getElementById("orders");
+
+  const done =
+    document.getElementById("doneOrders");
+
+  open.innerHTML = "";
+  done.innerHTML = "";
+
+  const openOrders =
+    orders.filter(o => o.status === "open");
+
+  const doneOrders =
+    orders.filter(o => o.status === "done");
+
+  if (openOrders.length === 0) {
+
+    open.innerHTML =
+      '<p class="empty">Keine offenen Bestellungen.</p>';
+
+  }
+
+  openOrders.forEach(function(order) {
+
+    open.appendChild(
+      createOrder(order)
+    );
+
+  });
+
+  if (doneOrders.length === 0) {
+
+    done.innerHTML =
+      '<p class="empty">Keine erledigten Bestellungen.</p>';
+
+  }
+
+  doneOrders.forEach(function(order) {
+
+    done.appendChild(
+      createOrder(order)
+    );
+
+  });
+}
+
+function createOrder(order) {
+
+  const box =
+    document.createElement("div");
+
+  box.className = "order";
+
+  const title =
+    document.createElement("div");
+
+  title.className = "order-title";
+
+  title.innerHTML =
+    "<span>Tisch " +
+    order.table +
+    "</span>" +
+    "<span>" +
+    order.time +
+    "</span>";
+
+  box.appendChild(title);
+
+  const items =
+    document.createElement("div");
+
+  items.className = "order-items";
+
+  items.textContent =
+    order.items.join("\n");
+
+  box.appendChild(items);
+
+  const actions =
+    document.createElement("div");
+
+  actions.className =
+    "order-actions";
+
+  const statusButton =
+    document.createElement("button");
+
+  if (order.status === "open") {
+
+    statusButton.textContent =
+      "✓ Geliefert";
+
+    statusButton.className =
+      "done";
+
+    statusButton.onclick = function() {
+
+      order.status = "done";
+
+      saveData();
+
+      renderOrders();
+
+    };
+
+  } else {
+
+    statusButton.textContent =
+      "↩ Wieder öffnen";
+
+    statusButton.onclick = function() {
+
+      order.status = "open";
+
+      saveData();
+
+      renderOrders();
+
+    };
+
+  }
+
+  const deleteButton =
+    document.createElement("button");
+
+  deleteButton.textContent =
+    "🗑 Löschen";
+
+  deleteButton.onclick = function() {
+
+    orders =
+      orders.filter(
+        o => o.id !== order.id
+      );
+
+    saveData();
+
+    renderOrders();
+
+  };
+
+  actions.appendChild(statusButton);
+  actions.appendChild(deleteButton);
+
+  box.appendChild(actions);
+
+  return box;
+}
+
+renderTables();
+renderDrinks();
+renderCart();
+renderOrders();
+
 </script>
+
+</body>
 </html>
